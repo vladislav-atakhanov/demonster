@@ -1,5 +1,5 @@
 <script>
-import { createSlides } from "../demonster"
+import { createSlides, save } from "../demonster"
 import { debounce } from "../utils"
 
 import TabLink from "./tabs/link.svelte";
@@ -45,7 +45,11 @@ $: tabs = getTabsList(editor)
 		</TabContent>
 	</div>
 	<footer class="actions">
-		<a href="https://eloh1m.com" style="float: right;">eloh1m</a>
+		<label>
+			Название файлов
+			<input type="text" class="filename" value="Слайд-$.png">
+		</label>
+		<button on:click={save}>Сохранить</button>
 	</footer>
 </div>
 

@@ -1,12 +1,12 @@
 import { Converter } from "showdown"
 import { slides } from "../store"
-const converter = new Converter()
+import _save from "./save"
 
+export let save = _save
 export async function createSlides(md) {
-	const $markdown = document.createElement("div")
-	$markdown.innerHTML = converter.makeHtml(md)
-
-	let slidesHTML = Demonster($markdown, {
+	const markdown = document.createElement("div")
+	markdown.innerHTML = converter.makeHtml(md)
+	let slidesHTML = Demonster(markdown, {
 		selector: {
 			tag: "section",
 			"class": "slide"
@@ -22,6 +22,7 @@ function createElement(tag="div", className=false) {
 	return element
 }
 
+const converter = new Converter()
 function Demonster(element, opts) {
 	const defaultOpts = {
 		selector: {

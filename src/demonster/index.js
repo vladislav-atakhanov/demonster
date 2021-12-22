@@ -2,10 +2,47 @@ import { Converter } from "showdown"
 import { slides } from "../store"
 import _save from "./save"
 
-export let save = _save
-export async function createSlides(md) {
+async function toDataURL(url) {
+	const blob = await fetch(url).then(response => response.blob())
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader()
+		reader.onloadend = () => resolve(reader.result)
+		reader.onerror = reject
+		reader.readAsDataURL(blob)
+	})
+}
+
+const converter = new Converter()
+async function mdToHTML(md) {
 	const markdown = document.createElement("div")
 	markdown.innerHTML = converter.makeHtml(md)
+
+	let imagesAtBase64 = {}
+	for (let img of markdown.querySelectorAll("img")) {
+		let src = img.src
+		if (src.startsWith("data:"))
+			continue
+
+		if (!imagesAtBase64[src]) {
+			try {
+				imagesAtBase64[src] = await toDataURL(src)
+			} catch (error) {
+				img.alt = "Ошибка при подгузке"
+				imagesAtBase64[src] = "error"
+			}
+		}
+
+
+		img.src = imagesAtBase64[src]
+
+		if (img.parentElement.childNodes.length == 1)
+			img.parentElement.replaceWith(img)
+	}
+	return markdown
+}
+
+export async function createSlides(md) {
+	const markdown = await mdToHTML(md)
 	let slidesHTML = Demonster(markdown, {
 		selector: {
 			tag: "section",
@@ -22,7 +59,6 @@ function createElement(tag="div", className=false) {
 	return element
 }
 
-const converter = new Converter()
 function Demonster(element, opts) {
 	const defaultOpts = {
 		selector: {
@@ -57,10 +93,10 @@ function Demonster(element, opts) {
 
 				const textArray = text.split(" ")
 				for (let word of textArray) {
-					const $text = document.createTextNode(word + " ")
-					to.appendChild($text)
+					const text = document.createTextNode(word + " ")
+					to.appendChild(text)
 					if (debug.offsetHeight > height) {
-						to.removeChild($text)
+						to.removeChild(text)
 						to = element.cloneNode(false)
 						to.innerHTML = word
 						toNewPage(to)
@@ -107,6 +143,7 @@ function Demonster(element, opts) {
 				appendElement(childClone, child)
 		}
 	}
+	document.body.removeChild(to)
 
 	const html = []
 	for (const slide of to.children) {
@@ -116,6 +153,7 @@ function Demonster(element, opts) {
 		html.push(clone.outerHTML)
 	}
 
-	document.body.removeChild(to)
 	return html
 }
+
+export let save = _save

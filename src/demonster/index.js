@@ -1,6 +1,9 @@
 import { Converter } from "showdown"
 import { slides } from "../store"
 import _save from "./save"
+import { showSlide } from "./shower"
+
+export let show = showSlide
 
 async function toDataURL(url) {
 	const blob = await fetch(url).then(response => response.blob())

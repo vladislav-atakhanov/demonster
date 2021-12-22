@@ -44,3 +44,10 @@ export function deleteProperty($element, property) {
 		return styles
 	})
 }
+
+export function getCSSWidthAndHeight(element) {
+	const computedStyles = getComputedStyle(element)
+	let width = parseInt(computedStyles.width)
+	let height = parseInt(computedStyles.height)
+	return [width, height]
+}

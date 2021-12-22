@@ -1,10 +1,16 @@
 <script>
 import { slides } from "../../store"
+import { show } from "../../demonster"
 
 let temp, width = 1
 const setWidth = () => width = temp.offsetWidth
 $: temp && setTimeout(setWidth, 100);
 onresize = setWidth
+
+function click(e) {
+	show(this, e)
+}
+
 </script>
 
 <div class="slides" style="--width: {width}">
@@ -12,7 +18,7 @@ onresize = setWidth
 	<ul class="slide__list">
 		<li class="slide__item--tmp" bind:this={temp}></li>
 		{#each $slides as slideHTML, i (i)}
-			<li class="slide__item">{@html slideHTML}</li>
+			<li on:click={click} class="slide__item">{@html slideHTML}</li>
 		{/each}
 	</ul>
 </div>
@@ -38,6 +44,26 @@ onresize = setWidth
 	width: 1px;
 	height: calc(var(--slide-height) * 1px * var(--scale, 1));
 }
+
+:global(li.slide__item.slide__item--active) {
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	background-color: #000d;
+	width: auto;
+	height: auto;
+	--scale: 1;
+}
+:global(.slide__item--active .slide) {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: scale(var(--scale)) translate(-50%, -50%);
+}
+
 h2 {
 	margin: 0;
 }

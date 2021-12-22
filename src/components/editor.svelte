@@ -1,0 +1,94 @@
+<script>
+import { createSlides } from "../demonster"
+import { debounce } from "../utils"
+
+import TabLink from "./tabs/link.svelte";
+import TabContent from "./tabs/content.svelte"
+
+
+let md = "# Demonster\n\nЭто конвентор markdown в слайды"
+onload = () => setTimeout(() => createSlides(md), 100)
+const slides = debounce(() => createSlides(md), 100)
+$: md && slides()
+
+let tabs = []
+function getTabsList(parent) {
+	if (!parent)
+		return []
+	let tabsList = []
+	const tabs = parent.querySelectorAll(".tab")
+	for (let tab of tabs) {
+		tabsList.push({
+			title: tab.dataset.title,
+			content: tab
+		})
+	}
+	return tabsList
+}
+
+let editor
+$: tabs = getTabsList(editor)
+</script>
+
+<div class="editor" bind:this={editor}>
+	<header class="tab__list">
+		{#each tabs as tab}
+			<TabLink {...tab} class="tab__link"/>
+		{/each}
+	</header>
+	<div class="tab__contents">
+		<TabContent title="Редактор" id="editor" active>
+			<textarea bind:value={md}></textarea>
+		</TabContent>
+		<TabContent title="Тема" id="theme">
+			<div>TODO</div>
+		</TabContent>
+	</div>
+	<footer class="actions">
+		<a href="https://eloh1m.com" style="float: right;">eloh1m</a>
+	</footer>
+</div>
+
+<style>
+.editor {
+	display: grid;
+	grid-template-rows: max-content auto max-content;
+	overflow: hidden;
+	background-color: #fff;
+	padding-bottom: 1em;
+}
+.tab__contents {
+	display: grid;
+}
+.tab__list {
+	display: flex;
+}
+:global(.tab__link) {
+	flex: 1;
+	text-align: center;
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	font: inherit;
+	padding: 0;
+	margin: 0;
+	line-height: 1.5;
+	background-color: #ccc;
+	border: none;
+	cursor: pointer;
+}
+:global(.tab__link.tab--active) {
+	background-color: #fff;
+	font-weight: bold;
+}
+.actions {
+	padding: 0 1em;
+}
+textarea {
+	margin: 0;
+	padding: 1em;
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+</style>

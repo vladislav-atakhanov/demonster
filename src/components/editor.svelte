@@ -1,15 +1,19 @@
 <script>
 import { createSlides, save } from "../demonster"
-import { debounce } from "../utils"
+import { debounce, localStorageGet, localStorageSet } from "../utils"
 
 import TabLink from "./tabs/link.svelte";
 import TabContent from "./tabs/content.svelte"
+import Theme from "./theme/settings.svelte"
 
 
-let md = "# Demonster\n\nЭто конвентор markdown в слайды"
+let md = localStorageGet("markdown") || "# Demonster\n\nЭто конвентор markdown в слайды"
 onload = () => setTimeout(() => createSlides(md), 100)
 const slides = debounce(() => createSlides(md), 100)
-$: md && slides()
+$: {
+	localStorageSet("markdown", md)
+	slides()
+}
 
 let tabs = []
 function getTabsList(parent) {
@@ -41,7 +45,7 @@ $: tabs = getTabsList(editor)
 			<textarea bind:value={md}></textarea>
 		</TabContent>
 		<TabContent title="Тема" id="theme">
-			<div>TODO</div>
+			<Theme />
 		</TabContent>
 	</div>
 	<footer class="actions">

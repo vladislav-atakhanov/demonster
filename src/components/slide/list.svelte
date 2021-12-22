@@ -26,6 +26,7 @@ onresize = setWidth
 
 .slide__list {
 	display: grid;
+	grid-template-columns: repeat(var(--column, 1), 1fr);
 	gap: 1em;
 	align-items: start;
 	margin: 0;

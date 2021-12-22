@@ -9,10 +9,25 @@ body {
 	overflow-x: hidden;
 }
 
+@media (min-width: 480px) and (max-width: 649px) {
+	body {
+		--column: 2
+	}
+}
+
 @media (min-width: 650px) {
 	body {
 		display: grid;
 		grid-template-columns: 1fr 50%;
+	}
+	.editor {
+		position: sticky;
+		bottom: 0;
+	}
+}
+@media (min-width: 1080px) {
+	body {
+		--column: 2
 	}
 }
 

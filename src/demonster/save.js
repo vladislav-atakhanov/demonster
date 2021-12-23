@@ -8,8 +8,11 @@ export default async function() {
 
 	const slidesAsPng = await slidesToPng(slides)
 
+	let length = `${slidesAsPng.length}`.length
 	slidesAsPng.forEach((slide, index) => {
-		let filename = filenameTemplate.replace(/\$/g, index + 1)
+		let i = index + 1
+		let l = `${i}`.length
+		let filename = filenameTemplate.replace(/\$/g, "0".repeat(length - l) + i)
 		if (slide.data) {
 			let data = slide.data.split(",")[1]
 			zip.file(filename, data, {base64: true})

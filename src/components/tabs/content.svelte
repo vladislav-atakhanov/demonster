@@ -10,12 +10,9 @@ export let id
 
 <style>
 .tab {
-	opacity: 0;
-	pointer-events: none;
-	grid-area: 1 / 1 / -1 / -1;
+	display: none;
 }
 :global(.tab.tab--active) {
-	opacity: 1;
-	pointer-events: all;
+	display: block;
 }
 </style>

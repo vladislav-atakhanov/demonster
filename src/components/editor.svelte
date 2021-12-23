@@ -10,10 +10,41 @@ import Theme from "./theme/settings.svelte"
 let md = localStorageGet("markdown") || "# Demonster\n\nЭто конвентор markdown в слайды"
 onload = () => setTimeout(() => createSlides(md), 100)
 const slides = debounce(() => createSlides(md), 100)
+let textarea
+
 $: {
 	localStorageSet("markdown", md)
 	slides()
+
+	if (textarea) {
+		textarea.style.height = ""
+		textarea.style.minHeight = textarea.scrollHeight + "px"
+	}
 }
+let lastScrollTop = 0
+function scroll() {
+	if (innerWidth < 650 || !editor)
+		return
+
+	let scrollTop = window.pageYOffset || document.documentElement.scrollTop
+	let direction = scrollTop > lastScrollTop
+	lastScrollTop = scrollTop <= 0 ? 0 : scrollTop
+
+
+	const style = editor.style
+	let top = parseInt(editor.style.top) || 0
+
+	let deltaHeight = editor.offsetHeight - innerHeight
+
+	if (deltaHeight < 0) {
+		style.top = scrollTop + "px"
+	} else if (direction && scrollTop - top > deltaHeight) {
+		style.top = scrollTop - deltaHeight + "px"
+	} else if (!direction && top > scrollTop) {
+		style.top = scrollTop + "px"
+	}
+}
+onscroll = scroll
 
 let tabs = []
 function getTabsList(parent) {
@@ -42,17 +73,16 @@ $: tabs = getTabsList(editor)
 	</header>
 	<div class="tab__contents">
 		<TabContent title="Редактор" id="editor" active>
-			<textarea bind:value={md}></textarea>
+			<textarea
+				bind:this={textarea}
+				bind:value={md}
+			></textarea>
 		</TabContent>
 		<TabContent title="Тема" id="theme">
 			<Theme />
 		</TabContent>
 	</div>
 	<footer class="actions">
-		<label>
-			Название файлов
-			<input type="text" class="filename" value="Слайд-$.png">
-		</label>
 		<button on:click={save}>Сохранить</button>
 	</footer>
 </div>
@@ -63,7 +93,6 @@ $: tabs = getTabsList(editor)
 	grid-template-rows: max-content auto max-content;
 	overflow: hidden;
 	background-color: #fff;
-	padding-bottom: 1em;
 }
 .tab__contents {
 	display: grid;
@@ -98,5 +127,7 @@ textarea {
 	width: 100%;
 	height: 100%;
 	border: none;
+	line-height: 1;
+	display: block;
 }
 </style>

@@ -3,6 +3,7 @@ import FontFamily from "./font-family.svelte"
 import FontSize from "./font-size.svelte"
 import AccentColor from "./accent-color.svelte"
 import SlideColor from "./slide-color.svelte"
+import Save from "./save.svelte"
 </script>
 
 <div class="theme">
@@ -10,6 +11,7 @@ import SlideColor from "./slide-color.svelte"
 	<FontSize />
 	<AccentColor />
 	<SlideColor />
+	<Save />
 </div>
 
 <style>

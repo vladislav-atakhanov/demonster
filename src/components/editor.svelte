@@ -1,6 +1,6 @@
 <script>
 import { createSlides, save } from "../demonster"
-import { debounce, localStorageGet, localStorageSet } from "../utils"
+import { debounce, localStorageGet, localStorageSet, fixElement } from "../utils"
 
 import TabLink from "./tabs/link.svelte";
 import TabContent from "./tabs/content.svelte"
@@ -17,32 +17,17 @@ $: {
 	slides()
 
 	if (textarea) {
-		textarea.style.height = ""
+		textarea.style.minHeight = ""
 		textarea.style.minHeight = textarea.scrollHeight + "px"
 	}
 }
 let lastScrollTop = 0
 function scroll() {
-	if (innerWidth < 650 || !editor)
-		return
-
 	let scrollTop = window.pageYOffset || document.documentElement.scrollTop
 	let direction = scrollTop > lastScrollTop
+	fixElement(editor, direction)
+	fixElement(document.querySelector(".slides"), direction)
 	lastScrollTop = scrollTop <= 0 ? 0 : scrollTop
-
-
-	const style = editor.style
-	let top = parseInt(editor.style.top) || 0
-
-	let deltaHeight = editor.offsetHeight - innerHeight
-
-	if (deltaHeight < 0) {
-		style.top = scrollTop + "px"
-	} else if (direction && scrollTop - top > deltaHeight) {
-		style.top = scrollTop - deltaHeight + "px"
-	} else if (!direction && top > scrollTop) {
-		style.top = scrollTop + "px"
-	}
 }
 onscroll = scroll
 

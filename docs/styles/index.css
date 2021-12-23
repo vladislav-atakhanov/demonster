@@ -21,7 +21,7 @@ body {
 		grid-template-columns: 1fr 50%;
 		align-items: start;
 	}
-	body::before {
+	body::before, body::after {
 		content: "";
 	}
 	.editor {
@@ -30,6 +30,9 @@ body {
 	}
 	.slides {
 		min-height: 100vh;
+		position: absolute;
+		width: 50%;
+		right: 0;
 	}
 }
 @media (min-width: 1080px) {

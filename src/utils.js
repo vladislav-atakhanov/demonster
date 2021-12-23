@@ -51,3 +51,22 @@ export function getCSSWidthAndHeight(element) {
 	let height = parseInt(computedStyles.height)
 	return [width, height]
 }
+
+export function fixElement(element, direction, minHeight=650) {
+	if (innerWidth < minHeight || !element)
+		return
+
+	let scrollTop = window.pageYOffset || document.documentElement.scrollTop
+	const style = element.style
+	let top = parseInt(style.top) || 0
+
+	let deltaHeight = element.offsetHeight - innerHeight
+
+	if (deltaHeight < 0) {
+		style.top = scrollTop + "px"
+	} else if (direction && scrollTop - top > deltaHeight) {
+		style.top = scrollTop - deltaHeight + "px"
+	} else if (!direction && top > scrollTop) {
+		style.top = scrollTop + "px"
+	}
+}
